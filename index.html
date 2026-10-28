@@ -287,7 +287,7 @@ footer ul a:hover{color:#fff}
 
 <section class="slider" id="top" aria-roledescription="carousel" aria-label="Highlights">
   <div class="slides">
-    <article class="slide photo-slide s-stage active" aria-label="1 of 3">
+    <article class="slide photo-slide s-stage active" aria-label="1 of 3" data-ms="3000">
       <div class="wrap"><div class="stext">
         <p class="eyebrow">Online vocal classes</p>
         <h1>Find your voice, <em>one swar</em> at a time.</h1>
@@ -306,7 +306,7 @@ footer ul a:hover{color:#fff}
         <video class="reel" src="intro-reel.mp4" poster="intro-reel-poster.jpg" muted playsinline preload="auto" aria-label="Sing with Suparna intro video"></video>
       </div>
     </article>
-    <article class="slide photo-slide s-kids" aria-label="3 of 3">
+    <article class="slide photo-slide s-kids" aria-label="3 of 3" data-ms="3000">
       <div class="wrap"><div class="stext">
         <p class="eyebrow">For children and adults</p>
         <h1>Learn swar, raag and taal with <em>patient guidance</em>.</h1>
@@ -520,7 +520,7 @@ footer ul a:hover{color:#fff}
   function syncVideos(){slides.forEach((s,k)=>{const v=s.querySelector('video');if(!v)return;if(k===i){try{v.currentTime=0}catch(e){}v.defaultPlaybackRate=1.6;v.playbackRate=1.6;const p=v.play();if(p&&p.catch)p.catch(()=>{})}else v.pause()})}
   function show(n){slides[i].classList.remove('active');dots[i].classList.remove('on');i=(n+slides.length)%slides.length;slides[i].classList.add('active');dots[i].classList.add('on');syncVideos()}
   function stop(){clearTimeout(timer)}
-  function start(){stop();const v=slides[i].querySelector('video');const ms=v?Math.max(5000,((v.duration||12)-(v.currentTime||0))/1.6*1000+800):5000;timer=setTimeout(()=>{show(i+1);start()},ms)}
+  function start(){stop();const v=slides[i].querySelector('video');const ms=v?Math.max(5000,((v.duration||12)-(v.currentTime||0))/1.6*1000+800):(+slides[i].dataset.ms||5000);timer=setTimeout(()=>{show(i+1);start()},ms)}
   dots.forEach((d,n)=>d.addEventListener('click',()=>{show(n);start()}));
   const sl=document.querySelector('.slider');let x0=null;
   sl.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
