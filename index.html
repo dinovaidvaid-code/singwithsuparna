@@ -81,20 +81,53 @@ h2{font-size:clamp(2.1rem,4.4vw,3.2rem);margin-top:14px}
 .s-vid{background:radial-gradient(circle at 72% 45%,#6a2a7a 0%,var(--plum-2) 40%,#170818 100%)}
 .vgrid{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center}
 .reel{justify-self:center;height:clamp(400px,52vh,560px);max-width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:26px;border:3px solid var(--gold-soft);box-shadow:0 30px 70px #000a,0 0 0 10px #ffffff10;background:#1a0a1f}
-.reel.pic{overflow:hidden}
-.reel.pic img{width:100%;height:100%;object-fit:cover}
-.slide.active .reel.pic img{animation:drift 4s ease-out both}
-@keyframes drift{from{transform:scale(1)}to{transform:scale(1.12)}}
-@media (prefers-reduced-motion:reduce){.slide.active .reel.pic img{animation:none}}
+/* slide 1: full-bleed stage photo with a slow zoom and a sound-wave */
+.s-full{position:relative;overflow:hidden;isolation:isolate}
+.s-full .bg{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:right center}
+.s-full::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#1a0820f5 0%,#1a0820c4 38%,#1a082000 70%)}
+.slide.active .bg{animation:zoomout 6s ease-out both}
+@keyframes zoomout{from{transform:scale(1.14)}to{transform:scale(1)}}
+.eq{display:flex;align-items:flex-end;gap:4px;height:28px;margin-bottom:16px}
+.eq i{width:4px;height:100%;border-radius:2px;background:var(--gold-soft);transform-origin:bottom;animation:eq .9s ease-in-out infinite alternate}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}.eq i:nth-child(4){animation-delay:-.15s}.eq i:nth-child(5){animation-delay:-.45s}
+@keyframes eq{from{transform:scaleY(.2)}to{transform:scaleY(1)}}
+/* slide 3: two tilted polaroids */
+.polas{position:relative;justify-self:center;width:min(440px,100%);height:clamp(400px,52vh,540px)}
+.pola{position:absolute;margin:0;padding:12px 12px 0;border-radius:6px;background:#fffaf2;box-shadow:0 26px 50px #000b}
+.pola img{width:100%;object-fit:cover;border-radius:3px}
+.pola figcaption{padding:10px 0 12px;text-align:center;font-family:var(--serif);font-style:italic;font-size:1.05rem;color:var(--plum)}
+.p1{width:70%;left:0;top:2%;transform:rotate(-6deg)}
+.p1 img{aspect-ratio:1;object-position:60% center}
+.p1 figcaption{text-align:left;padding-left:4px}
+.p2{width:50%;right:0;bottom:0;transform:rotate(5deg)}
+.p2 img{aspect-ratio:4/5;object-position:center 25%}
+.slide.active .p1{animation:dropl .9s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .p2{animation:dropr .9s .18s cubic-bezier(.2,.8,.2,1) both}
+@keyframes dropl{from{opacity:0;transform:translateY(-40px) rotate(-16deg)}to{opacity:1;transform:rotate(-6deg)}}
+@keyframes dropr{from{opacity:0;transform:translateY(-40px) rotate(14deg)}to{opacity:1;transform:rotate(5deg)}}
+/* every slide: text rises in line by line */
+.slide.active .stext>*{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.slide.active .stext>:nth-child(2){animation-delay:.1s}.slide.active .stext>:nth-child(3){animation-delay:.2s}.slide.active .stext>:nth-child(4){animation-delay:.3s}.slide.active .stext>:nth-child(5){animation-delay:.4s}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide.active .bg,.eq i,.slide.active .pola,.slide.active .stext>*{animation:none}}
 .slide h1,.slide .lead,.slide .eyebrow{text-shadow:0 2px 18px #0008}
 .dots{position:absolute;left:0;right:0;bottom:26px;z-index:3;display:flex;justify-content:center;gap:2px}
-.dots button{width:22px;height:22px;padding:0;border:0;background:transparent;cursor:pointer;display:grid;place-items:center}
-.dots button::before{content:"";width:8px;height:8px;border-radius:50%;background:#ffffff80;transition:all .3s}
-.dots button.on::before{background:var(--gold-soft);transform:scale(1.35)}
-.dots button:hover::before{background:#fff}
+.dots button{min-width:22px;height:22px;padding:0 3px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center}
+.dots button::before{content:"";width:8px;height:8px;border-radius:4px;background:#ffffff80;transition:width .3s,background-color .3s}
+.dots button:hover::before{background-color:#fff}
+/* the active dot becomes a bar that fills over the slide's duration */
+.dots button.on::before{width:34px;background:linear-gradient(var(--gold-soft),var(--gold-soft)) 0 0/0% 100% no-repeat #ffffff40;animation:fill var(--d,5s) linear forwards}
+.dots.paused button.on::before{animation-play-state:paused}
+@keyframes fill{to{background-size:100% 100%}}
 @media (max-width:760px){
   .vgrid{grid-template-columns:1fr;gap:20px}
   .reel{height:clamp(220px,32vh,300px);order:-1}
+  .polas{order:-1;width:min(300px,100%);height:clamp(240px,34vh,310px)}
+  .pola{padding:8px 8px 0}
+  .pola figcaption{padding:6px 0 8px;font-size:.85rem}
+  .s-full{align-items:flex-end}
+  .s-full::before{background:linear-gradient(0deg,#1a0820fa 0%,#1a0820d0 45%,#1a082033 100%)}
+  .s-full .bg{object-position:78% center}
   .slide .ctas{margin-top:22px}
   .slide .lead{margin-top:12px;font-size:1.02rem}
   .slide{min-height:0;padding-block:28px 64px}
@@ -288,16 +321,15 @@ footer ul a:hover{color:#fff}
 
 <section class="slider" id="top" aria-roledescription="carousel" aria-label="Highlights">
   <div class="slides">
-    <article class="slide s-vid active" aria-label="1 of 3" data-ms="3000">
-      <div class="wrap vgrid">
-        <div class="stext">
-          <p class="eyebrow">Online vocal classes</p>
-          <h1>Find your voice, <em>one swar</em> at a time.</h1>
-          <p class="lead">Personal one-on-one singing classes in Indian Classical, Western Classical and Voice Culture.</p>
-          <div class="ctas"><a class="btn btn-gold" href="#contact">Book your first class</a><a class="btn btn-line" href="demo.html">Free demo class</a></div>
-        </div>
-        <div class="reel pic"><img src="img/stage.jpg" alt="Suparna performing on stage" style="object-position:78% center"></div>
-      </div>
+    <article class="slide s-full active" aria-label="1 of 3" data-ms="3000">
+      <img class="bg" src="img/stage.jpg" alt="Suparna performing on stage">
+      <div class="wrap"><div class="stext">
+        <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="eyebrow">Online vocal classes</p>
+        <h1>Find your voice, <em>one swar</em> at a time.</h1>
+        <p class="lead">Personal one-on-one singing classes in Indian Classical, Western Classical and Voice Culture.</p>
+        <div class="ctas"><a class="btn btn-gold" href="#contact">Book your first class</a><a class="btn btn-line" href="demo.html">Free demo class</a></div>
+      </div></div>
     </article>
     <article class="slide s-vid" aria-label="2 of 3">
       <div class="wrap vgrid">
@@ -317,7 +349,10 @@ footer ul a:hover{color:#fff}
           <h1>Learn swar, raag and taal with <em>patient guidance</em>.</h1>
           <div class="ctas"><a class="btn btn-gold" href="#contact">Book your first class</a><a class="btn btn-line" href="#courses">Courses &amp; fees</a></div>
         </div>
-        <div class="reel pic"><img src="img/kids.jpg" alt="Suparna teaching children with a tanpura" style="object-position:55% center"></div>
+        <div class="polas">
+          <figure class="pola p1"><img src="img/kids.jpg" alt="Suparna teaching children with a tanpura"><figcaption>Swar · Raag · Taal</figcaption></figure>
+          <figure class="pola p2"><img src="img/suparna.jpg" alt="Suparna singing"><figcaption>Learn with Suparna</figcaption></figure>
+        </div>
       </div>
     </article>
   </div>
@@ -527,12 +562,12 @@ footer ul a:hover{color:#fff}
   function syncVideos(){slides.forEach((s,k)=>{const v=s.querySelector('video');if(!v)return;if(k===i){try{v.currentTime=0}catch(e){}v.defaultPlaybackRate=1.6;v.playbackRate=1.6;const p=v.play();if(p&&p.catch)p.catch(()=>{})}else v.pause()})}
   function show(n){slides[i].classList.remove('active');dots[i].classList.remove('on');i=(n+slides.length)%slides.length;slides[i].classList.add('active');dots[i].classList.add('on');syncVideos()}
   function stop(){clearTimeout(timer)}
-  function start(){stop();const v=slides[i].querySelector('video');const ms=v?Math.max(5000,((v.duration||12)-(v.currentTime||0))/1.6*1000+800):(+slides[i].dataset.ms||5000);timer=setTimeout(()=>{show(i+1);start()},ms)}
+  function start(){stop();const v=slides[i].querySelector('video');const ms=v?Math.max(5000,((v.duration||12)-(v.currentTime||0))/1.6*1000+800):(+slides[i].dataset.ms||5000);const d=dots[i];d.style.setProperty('--d',ms+'ms');d.classList.remove('on');void d.offsetWidth;d.classList.add('on');timer=setTimeout(()=>{show(i+1);start()},ms)}
   dots.forEach((d,n)=>d.addEventListener('click',()=>{show(n);start()}));
   const sl=document.querySelector('.slider');let x0=null;
   sl.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
   sl.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){show(dx<0?i+1:i-1);start()}x0=null});
-  sl.addEventListener('mouseenter',stop);sl.addEventListener('mouseleave',start);
+  const dotsEl=document.querySelector('.dots');sl.addEventListener('mouseenter',()=>{stop();dotsEl.classList.add('paused')});sl.addEventListener('mouseleave',()=>{dotsEl.classList.remove('paused');start()});
   start();
 })();
 document.querySelectorAll('[data-course]').forEach(a=>a.addEventListener('click',()=>{document.getElementById('course').value=a.dataset.course}));
